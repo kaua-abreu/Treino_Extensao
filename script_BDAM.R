@@ -15,6 +15,9 @@
 
 # Ao terminar a Tarefa 1 commit com a mensagem " script - tarefa 1" e envie para o repositório Treino_Extensao
 
+dados_bd1 = read.csv("banco 1 SIM.csv", header=TRUE, sep=";")
+str(dados_bd1)
+summary(dados_bd1)
 
 # Tarefa 2: Manipulação dos dados
 # Padronizar as categorias VEICULO_CAUSADOR para Carro e Moto e indicar que branco é NA
