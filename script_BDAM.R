@@ -121,6 +121,7 @@ summary(dados_bd3)
 
 # Ao terminar a Tarefa 2 commit com a mensagem " script - tarefa 1 a 2" e envie para o repositório Treino_Extensao
 
+dados_bd3$MUNICIPIOS <- substr(dados_bd3$MUNICIPIO, 1, 6)
 
 # Tarefa 3: Criar o banco de dados BANCO3_RJ, POR MUNICÍPIO, com as seguintes variáveis listadas abaixo. 
 # Atenção: a 1a linha do banco deve ser da UF 33
