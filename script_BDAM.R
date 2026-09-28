@@ -159,6 +159,7 @@ BANCO3_RJ$NIVEL[as.character(BANCO3_RJ$CODIGO) == "33"] <- "UF"
 
 # Ao terminar a Tarefa 4 commit com a mensagem "dados e script - Etapa 3" e envie para o repositório Treino_Extensao
 
+write.csv2(BANCO3_RJ, file="BANCO3_RJ.csv", row.names = FALSE)
 
 ##### ETAPA 4 - banco 4 - equivalente ao ATLAS ######
 ##### Você deve criar e estar na branch banco-4 antes de inserir os comandos #####
