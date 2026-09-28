@@ -134,6 +134,26 @@ dados_bd3$MUNICIPIOS <- substr(dados_bd3$MUNICIPIO, 1, 6)
 
 # Ao terminar a Tarefa 3 commit com a mensagem " script - tarefa 1 a 3" e envie para o repositório Treino_Extensao
 
+POPHF <- aggregate(POP_FEM_HABILITADA_2020 ~ MUNICIPIOS, data = dados_bd3, FUN = sum, na.rm=TRUE)
+names(POPHF) <- c("CODIGO", "POPHF")
+
+POPHM <- aggregate(POP_MASC_HABILITADA_2020 ~ MUNICIPIOS, data = dados_bd3, FUN = sum, na.rm=TRUE)
+names(POPHM) <- c("CODIGO", "POPHM")
+
+POPH <- merge(POPHF, POPHM,all=TRUE,by="CODIGO")
+POPH$POPH <- POPH$POPHF + POPH$POPHM
+POPH <- POPH[, c(1,4)]
+  
+variaveis <- list(POPH, POPHF, POPHM)
+
+BANCO3_RJ <- Reduce(function(x,y) merge(x,y, all=TRUE, by = "CODIGO"), variaveis)
+
+ANO <- 2025
+NIVEL <- "MUNICIPIO"
+
+BANCO3_RJ <- cbind(ANO, NIVEL, BANCO3_RJ)
+
+BANCO3_RJ$NIVEL[as.character(BANCO3_RJ$CODIGO) == "33"] <- "UF"
 
 # Tarefa 4: Exportar o banco de dados BANCO3_RJ com o nome BANCO3_RJ.csv
 
