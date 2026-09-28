@@ -113,6 +113,8 @@
 
 # Ao terminar a Tarefa 1 commit com a mensagem " script - tarefa 1" e envie para o repositório Treino_Extensao
 
+dados_bd3 <- read.csv(file="banco 3 SIDRA.csv",header=TRUE,sep=";")
+summary(dados_bd3)
 
 # Tarefa 2: Manipulação dos dados
 # Criar a variável MUNICIPIOS = MUNICIPIO em dados_bd3, sendo que agora com 6 dígitos (em vez de 7 dígitos), desprezando o último dígito verificador
