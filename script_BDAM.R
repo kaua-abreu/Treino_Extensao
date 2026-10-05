@@ -169,7 +169,7 @@ write.csv2(BANCO3_RJ, file="BANCO3_RJ.csv", row.names = FALSE)
 # códigos dos municípios - 2010.csv" com os códigos do IBGE para os municípios do Brasil
 # Ler os arquivos, verificar estruturas dos dados e dar uma olhada nos dados
 
-dados_bd4 <- read.csv("banco 4 ATLAS.csv", header=TRUE, sep = ";")
+dados_bd4 <- read.csv("banco 4 ATLAS.csv", header=TRUE, sep = ";", encoding = "latin1")
 codigos <- read.csv("códigos dos municípios - 2010.csv", header=TRUE, sep = ";")
 
 # Ao terminar a Tarefa 1 commit com a mensagem " script - tarefa 1" e envie para o repositório Treino_Extensao
@@ -178,6 +178,53 @@ codigos <- read.csv("códigos dos municípios - 2010.csv", header=TRUE, sep = ";
 # Tarefa 2: Manipulação dos dados
 # Criar uma nova variável em dados_bd4 MUNICIPIOS atribuindo os códigos dos municípios, de forma a ficar
 # coerente com os nomes dos municipios e códigos IBGE
+
+# Criando funções úteis..
+
+AcharParenteses <- function(x){
+  p1 <- NULL
+  p2 <- NULL
+  x <- strsplit(x, "")[[1]]
+  for(i in 1:length(x)){
+    if(x[i] == "(") {p1 <- i}
+    if(x[i] == ")") {p2 <- i}
+  }
+  return(c(p1, p2))
+}
+
+Parenteses <- function(x){
+  v <- AcharParenteses(x)
+  if(is.null(v)) {return("UF")}
+  return(substr(x, v[1]+1, v[2]-1))
+}
+
+Nome <- function(x){
+  v <- AcharParenteses(x)
+  if(is.null(v)) {return(x)}
+  return(substr(x, 1, v[1]-2))
+}
+
+dados_bd4$NOME <- sapply(dados_bd4$MUNICIPIO, Nome)
+dados_bd4$SIGLA_UF <- sapply(dados_bd4$MUNICIPIO, Parenteses)
+
+codigos$UF <- substr(codigos$CODMUNRES, 1, 2)
+
+# Códigos das UF: 11: RO, 12: AC, 13: AM, 14: RR, 15: PA, 16: AP, 17: TO, 21: MA, 22: PI, 23: CE, 24: RN
+# 25: PB, 26: PE, 27: AL, 28: SE, 29: BA, 31: MG, 32: ES, 33: RJ, 35: SP, 41: PR, 42: SC, 43: RS
+# 50: MS, 51: MT, 52: GO, 53: DF
+
+UF <- c(11:17, 21:29, 31:33, 35, 41:43, 50:53)
+SIGLA_UF <- c("RO", "AC", "AM", "RR", "PA", "AP", "TO", "MA", "PI", "CE", "RN", "PB", "PE", "AL", "SE", "BA", "MG", "ES", "RJ", "SP", "PR", "SC", "RS", "MS", "MT", "GO", "DF")
+
+cods_UF <- as.data.frame(cbind(UF, SIGLA_UF))
+
+codigos2 <- merge(codigos, cods_UF, by = "UF")
+names(codigos2) <- c("UF", "NOME", "CODMUNRES", "SIGLA_UF")
+
+dados <- merge(codigos2, dados_bd4, by = intersect(names(codigos2), names(dados_bd4)), all.y=TRUE)
+dados <- dados[, -(1:3)]
+
+dados$CODMUNRES[dados$MUNICIPIO == "Rio de Janeiro"] <- 33
 
 # Ao terminar a Tarefa 2 commit com a mensagem " script - tarefa 1 a 2" e envie para o repositório Treino_Extensao
 
