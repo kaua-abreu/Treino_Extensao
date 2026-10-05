@@ -238,6 +238,15 @@ dados$CODMUNRES[dados$MUNICIPIO == "Rio de Janeiro"] <- 33
 # QRU: qualidade das rodovias urbanas
 # QRR: qualidade das rodovias rurais
 
+dados <- dados[, -2]
+dados <- dados[order(dados$CODMUNRES),]
+names(dados) <- c("CODMUNRES", "QR_CA", "QRU", "QRR")
+
+NIVEL <- "MUNICIPIO"
+ANO <- 2025
+
+BANCO4_RJ <- cbind(ANO, NIVEL, dados)
+BANCO4_RJ$NIVEL[BANCO4_RJ$CODMUNRES == "33"] <- "UF"
 
 # Ao terminar a Tarefa 3 commit com a mensagem " script - tarefa 1 a 3" e envie para o repositório Treino_Extensao
 
