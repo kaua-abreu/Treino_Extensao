@@ -161,6 +161,7 @@ write.csv2(BANCO1_RJ, file = "BANCO1_RJ.csv", row.names = FALSE)
 
 # Ao terminar a Tarefa 1 commit com a mensagem " script - tarefa 1" e envie para o repositório Treino_Extensao
 
+dados_bd2 <- read.csv("banco 2 SINASC.csv", header=TRUE, sep=";")
 
 # Tarefa 2: Manipulação dos dados
 # Padronizar as categorias SEXO_PROPRIETARIO para Masculino e Feminino
@@ -169,6 +170,14 @@ write.csv2(BANCO1_RJ, file = "BANCO1_RJ.csv", row.names = FALSE)
 
 # Ao terminar a Tarefa 2 commit com a mensagem " script - tarefa 1 a 2" e envie para o repositório Treino_Extensao
 
+dados_bd2$SEXO_PROPRIETARIO[toupper(dados_bd2$SEXO_PROPRIETARIO) == "MASCULINO"] <- "Masculino"
+dados_bd2$SEXO_PROPRIETARIO[toupper(dados_bd2$SEXO_PROPRIETARIO) == "FEMININO"] <- "Feminino"
+dados_bd2$SEXO_PROPRIETARIO[dados_bd2$SEXO_PROPRIETARIO == ""] <- NA
+
+dados_bd2$TIPO_VEICULO <- factor(dados_bd2$TIPO_VEICULO, levels = 1:2, labels = c("Carro", "Moto"))
+
+dados_bd2$F_IDADE <- ifelse(dados_bd2$IDADE_PROPRIETARIO %in% 22:34, "22 a 34", "35 a 45")
+dados_bd2$F_IDADE[is.na(dados_bd2$IDADE_PROPRIETARIO)] <- NA
 
 # Tarefa 3: Criar o banco de dados BANCO2_RJ, POR MUNICÍPIO, com as seguintes variáveis listadas abaixo. 
 # Variáveis que se referem a medidas de posição e de dispersão devem ser calculadas sem considerar NAs
@@ -192,12 +201,80 @@ write.csv2(BANCO1_RJ, file = "BANCO1_RJ.csv", row.names = FALSE)
 
 # Ao terminar a Tarefa 3 commit com a mensagem " script - tarefa 1 a 3" e envie para o repositório Treino_Extensao
 
+ANO <- 2025
+NIVEL <- "MUNICIPIO"
+
+TVV <- as.data.frame(table(dados_bd2$MUNICIPIO))
+names(TVV) <- c("CODMUNRES", "TVV")
+
+tabela1 <- dados_bd2[dados_bd2$TIPO_VEICULO == "Carro",]
+TCV <- as.data.frame(table(tabela1$MUNICIPIO))
+names(TCV) <- c("CODMUNRES", "TCV")
+
+tabela2 <- dados_bd2[dados_bd2$TIPO_VEICULO == "Moto",]
+TMV <- as.data.frame(table(tabela2$MUNICIPIO))
+names(TMV) <- c("CODMUNRES", "TMV")
+
+tabela3 <- dados_bd2[dados_bd2$SEXO_PROPRIETARIO == "Feminino",]
+TVVF <- as.data.frame(table(tabela3$MUNICIPIO))
+names(TVVF) <- c("CODMUNRES", "TVVF")
+
+tabela4 <- dados_bd2[dados_bd2$SEXO_PROPRIETARIO == "Masculino",]
+TVVM <- as.data.frame(table(tabela4$MUNICIPIO))
+names(TVVM) <- c("CODMUNRES", "TVVM")
+
+tabela5 <- dados_bd2[dados_bd2$F_IDADE == "22 a 34",]
+TVC_22_34 <- as.data.frame(table(tabela5$MUNICIPIO))
+names(TVC_22_34) <- c("CODMUNRES", "TVC_22_34")
+
+tabela6 <- dados_bd2[dados_bd2$F_IDADE == "35 a 45",]
+TVC_35_45 <- as.data.frame(table(tabela6$MUNICIPIO))
+names(TVC_35_45) <- c("CODMUNRES", "TVC_35_45")
+
+VMV <- aggregate(VALOR_VEICULO ~ MUNICIPIO, data = dados_bd2, FUN = mean, na.rm = TRUE)
+names(VMV) <- c("CODMUNRES", "VMV")
+
+DPV <- aggregate(VALOR_VEICULO ~ MUNICIPIO, data = dados_bd2, FUN = sd, na.rm = TRUE)
+names(DPV) <- c("CODMUNRES", "DPV")
+
+V_P25 <- aggregate(VALOR_VEICULO ~ MUNICIPIO, data = dados_bd2, FUN = quantile, probs = 0.25, na.rm = TRUE)
+names(V_P25) <- c("CODMUNRES", "V_P25")
+
+V_P50 <- aggregate(VALOR_VEICULO ~ MUNICIPIO, data = dados_bd2, FUN = quantile, probs = 0.5, na.rm = TRUE)
+names(V_P50) <- c("CODMUNRES", "V_P50")
+
+V_P75 <- aggregate(VALOR_VEICULO ~ MUNICIPIO, data = dados_bd2, FUN = quantile, probs = 0.75, na.rm = TRUE)
+names(V_P75) <- c("CODMUNRES", "V_P75")
+
+lista <- list(TVV, TCV, TMV, TVVF, TVVM, TVC_22_34, TVC_35_45, VMV, DPV, V_P25, V_P50, V_P75)
+
+BANCO2_RJ <- Reduce(function(x,y) merge(x,y, by = "CODMUNRES", all = TRUE), lista)
+BANCO2_RJ[is.na(BANCO2_RJ)] <- 0
+BANCO2_RJ <- cbind(ANO, NIVEL, BANCO2_RJ)
+
+dados_bd2$ESTADO <- "33"
+
+cols_validas <- sapply(BANCO2_RJ, is.numeric)
+UF <- BANCO2_RJ[1,]
+UF$CODMUNRES <- "33"
+UF[, cols_validas] <- colSums(BANCO2_RJ[,cols_validas])
+
+UF$VMV <- aggregate(VALOR_VEICULO ~ ESTADO, data = dados_bd2, FUN = mean, na.rm = TRUE)[, "VALOR_VEICULO"]
+UF$DPV <- aggregate(VALOR_VEICULO ~ ESTADO, data = dados_bd2, FUN = sd, na.rm = TRUE)[, "VALOR_VEICULO"]
+UF$V_P25 <- aggregate(VALOR_VEICULO ~ ESTADO, data = dados_bd2, FUN = quantile, probs = 0.25, na.rm = TRUE)[, "VALOR_VEICULO"]
+UF$V_P50 <- aggregate(VALOR_VEICULO ~ ESTADO, data = dados_bd2, FUN = quantile, probs = 0.5, na.rm = TRUE)[, "VALOR_VEICULO"]
+UF$V_P75 <- aggregate(VALOR_VEICULO ~ ESTADO, data = dados_bd2, FUN = quantile, probs = 0.75, na.rm = TRUE)[, "VALOR_VEICULO"]
+
+UF$ANO <- 2025
+UF$NIVEL <- "UF"
+
+BANCO2_RJ <- rbind(UF, BANCO2_RJ)
 
 # Tarefa 4: Exportar o banco de dados BANCO2_RJ com o nome BANCO2_RJ.csv
 
 # Ao terminar a Tarefa 4 commit com a mensagem "dados e script - Etapa 2" e envie para o repositório Treino_Extensao
 
-
+write.csv2(BANCO2_RJ, file = "BANCO2_RJ.csv", row.names = FALSE)
 
 ##### ETAPA 3 - banco 3 - equivalente ao SIDRA ######
 ##### Você deve criar e estar na branch banco-3 antes de inserir os comandos #####
