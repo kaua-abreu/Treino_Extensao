@@ -26,6 +26,14 @@ summary(dados_bd1)
 
 # Ao terminar a Tarefa 2 commit com a mensagem " script - tarefa 1 a 2" e envie para o repositório Treino_Extensao
 
+dados_bd1$VEICULO_CAUSADOR[toupper(dados_bd1$VEICULO_CAUSADOR) == "CARRO"] <- "Carro"
+dados_bd1$VEICULO_CAUSADOR[toupper(dados_bd1$VEICULO_CAUSADOR) == "MOTO"] <- "Moto"
+dados_bd1$VEICULO_CAUSADOR[dados_bd1$VEICULO_CAUSADOR == ""] <- NA
+
+dados_bd1$SEXO_CONDUTOR_CAUSADOR <- factor(dados_bd1$SEXO_CONDUTOR_CAUSADOR, levels = 1:2, labels = c("Masculino", "Feminino"))
+
+dados_bd1$F_IDADE <- ifelse(dados_bd1$IDADE_CONDUTOR_CAUSADOR %in% 22:34, "22 a 34", "35 a 45")
+dados_bd1$F_IDADE[is.na(dados_bd1$IDADE_CONDUTOR_CAUSADOR)] <- NA
 
 # Tarefa 3: Criar o banco de dados BANCO1_RJ, POR MUNICÍPIO, com as seguintes variáveis listadas abaixo. 
 # Variáveis que se referem a medidas de posição e de dispersão devem ser calculadas sem considerar NAs
