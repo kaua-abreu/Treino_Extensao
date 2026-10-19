@@ -150,7 +150,7 @@ BANCO1_RJ <- rbind(UF, BANCO1_RJ)
 
 # Ao terminar a Tarefa 4 commit com a mensagem "dados e script - Etapa 1"
 
-
+write.csv2(BANCO1_RJ, file = "BANCO1_RJ.csv", row.names = FALSE)
 
 ##### ETAPA 2 - banco 2 - equivalente ao SINASC ######
 ##### Você deve criar e estar na branch banco-2 antes de inserir os comandos #####
